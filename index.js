@@ -19,10 +19,24 @@ async function run() {
         const photoCollection = client.db('wildP').collection('myPhotoCollection');
 
         app.get('/myPhotoCollection', async (req, res) => {
-            const cursor = photoCollection.find({});
+            const query = {};
+            const option = {
+                sort: { rating: 1 }
+            }
+            const cursor = photoCollection.find(query, option);
             const photo = await cursor.toArray();
             res.send(photo);
-        })
+        });
+
+        app.get('/collections', async (req, res) => {
+            const query = {};
+            const option = {
+                sort: { rating: 1 }
+            }
+            const cursor = photoCollection.find(query, option);
+            const photo = await cursor.toArray();
+            res.send(photo);
+        });
 
         app.post('/myPhotoCollection', async (req, res) => {
             const photo = req.body;
