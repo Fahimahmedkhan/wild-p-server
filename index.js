@@ -35,6 +35,19 @@ async function run() {
             }
             const cursor = photoCollection.find(query, option);
             const photo = await cursor.toArray();
+            const estimate = await photoCollection.estimatedDocumentCount();
+            const removedNumber = estimate - 3;
+            const newPhoto = photo.splice(2, removedNumber);
+            res.send(photo);
+        });
+
+        app.get('/collection', async (req, res) => {
+            const query = {};
+            const option = {
+                sort: { rating: 1 }
+            }
+            const cursor = photoCollection.find(query, option);
+            const photo = await cursor.toArray();
             res.send(photo);
         });
 
