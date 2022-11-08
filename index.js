@@ -1,11 +1,43 @@
 const express = require('express');
 const cors = require('cors');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 5000;
+
 const app = express();
+require('dotenv').config();
 
 // middle wares
 app.use(cors());
 app.use(express.json());
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.habxwhg.mongodb.net/?retryWrites=true&w=majority`;
+
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+async function run() {
+    try {
+        const photoCollection = client.db('wildP').collection('myPhotoCollection');
+
+        app.get('/myPhotoCollection', async (req, res) => {
+            const cursor = photoCollection.find({});
+            const photo = await cursor.toArray();
+            res.send(photo);
+        })
+
+        app.post('/myPhotoCollection', async (req, res) => {
+            const photo = req.body;
+            const result = await photoCollection.insertOne(photo);
+            console.log(result);
+            photo._id = result.insertedId;
+            res.send(photo);
+        });
+    }
+    finally {
+
+    }
+}
+
+run().catch(error => console.error(error));
 
 app.get('/', (req, res) => {
     res.send('Wild-p server is running')
