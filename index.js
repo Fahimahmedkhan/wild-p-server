@@ -20,13 +20,16 @@ async function run() {
         const reviewCollection = client.db('wildP').collection('reviewCollection');
 
         app.get('/myPhotoCollection', async (req, res) => {
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
             const query = {};
             const option = {
                 sort: { date: -1 }
             }
             const cursor = photoCollection.find(query, option);
-            const photo = await cursor.toArray();
-            res.send(photo);
+            const photo = await cursor.skip(page * size).limit(size).toArray();
+            const count = await photoCollection.estimatedDocumentCount();
+            res.send({ count, photo });
         });
 
         app.get('/collections', async (req, res) => {
