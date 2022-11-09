@@ -22,7 +22,7 @@ async function run() {
         app.get('/myPhotoCollection', async (req, res) => {
             const query = {};
             const option = {
-                sort: { rating: 1 }
+                sort: { date: -1 }
             }
             const cursor = photoCollection.find(query, option);
             const photo = await cursor.toArray();
@@ -32,7 +32,7 @@ async function run() {
         app.get('/collections', async (req, res) => {
             const query = {};
             const option = {
-                sort: { rating: 1 }
+                sort: { date: -1 }
             }
             const cursor = photoCollection.find(query, option);
             const photo = await cursor.toArray();
@@ -45,7 +45,7 @@ async function run() {
         app.get('/collection', async (req, res) => {
             const query = {};
             const option = {
-                sort: { rating: 1 }
+                sort: { date: -1 }
             }
             const cursor = photoCollection.find(query, option);
             const photo = await cursor.toArray();
