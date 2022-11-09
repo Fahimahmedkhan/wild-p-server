@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 const app = express();
@@ -17,6 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const photoCollection = client.db('wildP').collection('myPhotoCollection');
+        const reviewCollection = client.db('wildP').collection('reviewCollection');
 
         app.get('/myPhotoCollection', async (req, res) => {
             const query = {};
@@ -49,6 +50,26 @@ async function run() {
             const cursor = photoCollection.find(query, option);
             const photo = await cursor.toArray();
             res.send(photo);
+        });
+
+        app.get('/myPhotoCollection/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const photo = await photoCollection.findOne(query);
+            res.send(photo);
+        });
+
+        // orders api
+        app.get('/reviewCollection', async (req, res) => {
+            let query = {};
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        });
+        app.post('/reviewCollection', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
         });
 
         app.post('/myPhotoCollection', async (req, res) => {
